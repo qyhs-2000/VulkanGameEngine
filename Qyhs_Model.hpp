@@ -6,7 +6,7 @@
 
 #include <memory>
 #include "glm/glm.hpp"
-
+#include "Qyhs_buffer.hpp"
 #include "Qyhs_Device.hpp"
 
 namespace QYHS
@@ -36,7 +36,7 @@ namespace QYHS
 			std::vector<Vertex> vertices{};
 			std::vector<uint32_t> indices{};
 
-			void loadModel( std::string& filePath);
+			void loadModel( const std::string& filePath);
 		};
 		QyhsModel(QyhsDevice & device, const QyhsModel::Builder & builder);
 		~QyhsModel();
@@ -46,7 +46,7 @@ namespace QYHS
 
 		
 		
-		static std::unique_ptr<QyhsModel> createModelFromFile(QyhsDevice & device,  std::string & filepath);
+		static std::unique_ptr<QyhsModel> createModelFromFile(QyhsDevice & device, const  std::string & filepath);
 
 
 		void bind(VkCommandBuffer commandBuffer);
@@ -54,12 +54,10 @@ namespace QYHS
 
 	private:
 		QyhsDevice & qyhsDevice;
-		VkBuffer vertexBuffer;
-		VkDeviceMemory vertexBufferMemory;
+		std::unique_ptr<QyhsBuffer> vertexBuffer;
 		uint32_t vertexCount;
 
-		VkBuffer indexBuffer;
-		VkDeviceMemory indexBufferMemory;
+		std::unique_ptr<QyhsBuffer> indexBuffer;
 		uint32_t indexCount;
 
 		bool hasIndexBuffer = false;

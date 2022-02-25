@@ -2,7 +2,7 @@
 #include "Qyhs_Window.hpp"
 #include "Qyhs_pipeline.hpp"
 #include "Qyhs_Renderer.hpp"
-#include "Qyhs_Camera.hpp"
+#include "Qyhs_frame_info.hpp"
 #include "GameObject.hpp"
 #include <memory>
 namespace QYHS
@@ -10,13 +10,13 @@ namespace QYHS
 	
 	struct SimplePushConstantData
 	{
-		glm::mat4 transform{ 1.f };
+		glm::mat4 modelMatrix{ 1.f };
 		glm::mat4 normalMatrix{ 1.f };
 	};
 	class SimpleRenderSystem
 	{
 	public:
-		SimpleRenderSystem(QyhsDevice &device,VkRenderPass renderPass);
+		SimpleRenderSystem(QyhsDevice &device,VkRenderPass renderPass,VkDescriptorSetLayout globalSetLayout);
 		~SimpleRenderSystem();
 
 
@@ -24,12 +24,13 @@ namespace QYHS
 		SimpleRenderSystem(const SimpleRenderSystem &) = delete;
 		SimpleRenderSystem & operator=(const SimpleRenderSystem&) = delete;
 
-		void renderGameObject(VkCommandBuffer commandBuffer, std::vector<QyhsGameObject>& gameObjects, QyhsCamera & camera);
+		void renderGameObject(FrameInfo & frameInfo, 
+			std::vector<QyhsGameObject>& gameObjects);
 
 	private:
 
 		void createPipeline(VkRenderPass renderPass);
-		void createPipelineLayout();
+		void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
 		
 
 		QyhsDevice &qyhsDevice;

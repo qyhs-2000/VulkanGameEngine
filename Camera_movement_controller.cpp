@@ -6,11 +6,7 @@ void QYHS::mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	//std::cout << xpos << "   " << ypos << std::endl;
 }
 
-QYHS::CameraMovementController::CameraMovementController(QyhsWindow & window)
-{
-	auto glfwWindow = window.getGlfwWindow();
-	glfwSetCursorPosCallback(glfwWindow, QYHS::mouse_callback);
-}
+
 
 void QYHS::CameraMovementController::moveInPlaneXZ(GLFWwindow * window, float deltaTime, QyhsGameObject & gameObject)
 {

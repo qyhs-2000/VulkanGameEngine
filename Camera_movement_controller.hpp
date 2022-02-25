@@ -22,7 +22,7 @@ namespace QYHS
 		};
 
 		
-		CameraMovementController(QyhsWindow & window);
+		
 		void moveInPlaneXZ(GLFWwindow * window, float deltaTime, QyhsGameObject& gameObject);
 
 		float moveSpeed{ 3.f };

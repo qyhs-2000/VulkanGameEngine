@@ -74,7 +74,7 @@ namespace QYHS
 		}
 		
 		isFrameStarted = false;
-		
+		currentFrameIndex = (currentFrameIndex + 1) % QyhsSwapChain::MAX_FRAMES_IN_FLIGHT;
 	}
 
 	void QyhsRenderer::beginSwapChainRenderPass(VkCommandBuffer commandBuffer)
@@ -136,7 +136,7 @@ namespace QYHS
 
 
 	}
-	/*´´½¨pipeline*/
+	/*ï¿½ï¿½ï¿½ï¿½pipeline*/
 	
 	void QyhsRenderer::freeCommandBuffer()
 	{
@@ -147,7 +147,7 @@ namespace QYHS
 	
 
 
-	/*´´½¨PipelineLayout*/
+	/*ï¿½ï¿½ï¿½ï¿½PipelineLayout*/
 	
 	
 	

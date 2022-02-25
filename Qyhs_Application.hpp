@@ -5,16 +5,12 @@
 #include "Camera_movement_controller.hpp"
 #include "Qyhs_RenderSystem.hpp"
 #include "GameObject.hpp"
+#include "Qyhs_buffer.hpp"
+#include "Qyhs_Descriptors.hpp"
 #include <memory>
 namespace QYHS
 {
-	/*struct SimplePushConstantData
-	{
-		glm::mat2 transform{ 1.f };
-		glm::vec2 offset;
-		alignas(16) glm::vec3 color;
-	};*/
-
+	
 
 	class QyhsApplication
 	{
@@ -22,8 +18,8 @@ namespace QYHS
 		QyhsApplication();
 		~QyhsApplication();
 
-		static constexpr int WIDTH = 800;
-		static constexpr int HEIGHT = 600;
+		static constexpr int WIDTH = 1200;
+		static constexpr int HEIGHT = 900;
 
 		void run();
 
@@ -40,6 +36,7 @@ namespace QYHS
 	
 		QyhsRenderer qyhsRender{ qyhsWindow,qyhsDevice };
 
+		std::unique_ptr<QyhsDescriptorPool> globalPool{};
 		std::vector<QyhsGameObject> gameObjects;
 	};
 }

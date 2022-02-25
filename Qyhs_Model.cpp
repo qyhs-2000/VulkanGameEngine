@@ -29,20 +29,8 @@ namespace QYHS
 		createVertexBuffers(builder.vertices);
 		createIndexBuffers(builder.indices);
 	}
-	QyhsModel::~QyhsModel()
-	{
-
-		vkDestroyBuffer(qyhsDevice.device(), vertexBuffer, nullptr);
-		vkFreeMemory(qyhsDevice.device(), vertexBufferMemory, nullptr);
-
-		if (hasIndexBuffer)
-		{
-			vkDestroyBuffer(qyhsDevice.device(), indexBuffer, nullptr);
-			vkFreeMemory(qyhsDevice.device(), indexBufferMemory, nullptr);
-		}
-
-	}
-	std::unique_ptr<QyhsModel> QyhsModel::createModelFromFile(QyhsDevice & device,  std::string & filepath)
+	QyhsModel::~QyhsModel(){}
+	std::unique_ptr<QyhsModel> QyhsModel::createModelFromFile(QyhsDevice & device, const  std::string & filepath)
 	{
 		Builder builder{};
 		builder.loadModel(filepath);
@@ -51,12 +39,12 @@ namespace QYHS
 	}
 	void QyhsModel::bind(VkCommandBuffer commandBuffer)
 	{
-		VkBuffer buffers[] = { vertexBuffer };
+		VkBuffer buffers[] = { vertexBuffer->getBuffer() };
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
 		if (hasIndexBuffer)
 		{
-			vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+			vkCmdBindIndexBuffer(commandBuffer, indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
 		}
 
 	}
@@ -78,25 +66,22 @@ namespace QYHS
 		assert(vertexCount >= 3 && "Vertex Count must be at least 3");
 		VkDeviceSize bufferSize = sizeof(vertices[0])*vertexCount;
 
-		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
+		uint32_t vertexSize = sizeof(vertices[0]);
+		QyhsBuffer stagingBuffer(qyhsDevice, vertexSize, vertexCount, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-		qyhsDevice.createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+		//qyhsDevice.createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
+		stagingBuffer.map();
+		stagingBuffer.writeToBuffer((void*)vertices.data());
 
-		/*��CPU���ڴ��GPU���ڴ��һ��*/
-		void * data;
-		vkMapMemory(qyhsDevice.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-		memcpy(data, vertices.data(), static_cast<size_t>(bufferSize));
-		vkUnmapMemory(qyhsDevice.device(), stagingBufferMemory);
-
-
-		qyhsDevice.createBuffer(bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
-
-		qyhsDevice.copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
-		vkDestroyBuffer(qyhsDevice.device(), stagingBuffer, nullptr);
-		vkFreeMemory(qyhsDevice.device(), stagingBufferMemory, nullptr);
+		vertexBuffer = std::make_unique<QyhsBuffer>(
+			qyhsDevice, vertexSize, vertexCount,
+			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+			);
+		qyhsDevice.copyBuffer(stagingBuffer.getBuffer(), vertexBuffer->getBuffer(), bufferSize);
+		
 	}
 	void QyhsModel::createIndexBuffers(const std::vector<uint32_t>& indices)
 	{
@@ -107,25 +92,25 @@ namespace QYHS
 			return;
 		}
 		VkDeviceSize bufferSize = sizeof(indices[0])*indexCount;
-		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
-
-		qyhsDevice.createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
-
-
+		uint32_t indexSize = sizeof(indices[0]);
 		
-		void * data;
-		vkMapMemory(qyhsDevice.device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-		memcpy(data, indices.data(), static_cast<size_t>(bufferSize));
-		vkUnmapMemory(qyhsDevice.device(), stagingBufferMemory);
+		QyhsBuffer stagingBuffer
+		{
+			qyhsDevice,indexSize,indexCount,
+			VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+		};
 
 
-		qyhsDevice.createBuffer(bufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
-
-		qyhsDevice.copyBuffer(stagingBuffer, indexBuffer, bufferSize);
-		vkDestroyBuffer(qyhsDevice.device(), stagingBuffer, nullptr);
-		vkFreeMemory(qyhsDevice.device(), stagingBufferMemory, nullptr);
+		stagingBuffer.map();
+		stagingBuffer.writeToBuffer((void*)indices.data());
+		
+		indexBuffer = std::make_unique<QyhsBuffer>(qyhsDevice, indexSize, indexCount,
+			VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+		
+		
+		qyhsDevice.copyBuffer(stagingBuffer.getBuffer(), indexBuffer->getBuffer(), bufferSize);
+		
 
 	}
 	std::vector<VkVertexInputBindingDescription> QyhsModel::Vertex::getBindingDescriptions()
@@ -150,7 +135,7 @@ namespace QYHS
 
 		return attributeDescription;
 	}
-	void QyhsModel::Builder::loadModel( std::string & filePath)
+	void QyhsModel::Builder::loadModel( const std::string & filePath)
 	{
 		tinyobj::attrib_t attrib;
 		std::vector<tinyobj::shape_t> shapes;

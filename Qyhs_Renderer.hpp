@@ -42,7 +42,10 @@ namespace QYHS
 
 		void beginSwapChainRenderPass(VkCommandBuffer commandBuffer);
 		void endSwapChainRenderPass(VkCommandBuffer commandBuffer);
-
+		int getFrameIndex() const {
+			assert(isFrameStarted && "Cannot get frame index when frame not in progress");
+			return currentFrameIndex;
+		}
 	private:
 		void createCommandBuffrrs();
 		void freeCommandBuffer();
@@ -53,6 +56,7 @@ namespace QYHS
 		std::unique_ptr<QyhsSwapChain> qyhsSwapChain;
 		std::vector<VkCommandBuffer> commandBuffers;
 		uint32_t currentImageIndex;
+		int currentFrameIndex{ 0 };
 		bool isFrameStarted = false;
 
 	};

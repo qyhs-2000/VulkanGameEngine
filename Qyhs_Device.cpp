@@ -413,7 +413,6 @@ namespace QYHS {
 		VkMemoryPropertyFlags properties,
 		VkBuffer &buffer,
 		VkDeviceMemory &bufferMemory) {
-		/*创建buffer*/
 		VkBufferCreateInfo bufferInfo{};
 		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 		bufferInfo.size = size;
@@ -428,7 +427,6 @@ namespace QYHS {
 		vkGetBufferMemoryRequirements(device_, buffer, &memRequirements);
 
 
-		/*分配内存给buffer*/
 		VkMemoryAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		allocInfo.allocationSize = memRequirements.size;
@@ -438,7 +436,6 @@ namespace QYHS {
 			throw std::runtime_error("failed to allocate vertex buffer memory!");
 		}
 
-		/*将buffer绑定到memory中*/
 		vkBindBufferMemory(device_, buffer, bufferMemory, 0);
 	}
 
