@@ -23,9 +23,9 @@ namespace QYHS {
 
     struct GlobalUbo {
         glm::mat4 projectionView{ 1.f };
-        glm::vec4 ambientColor{ 1.f,1.f,1.f,0.2f };
-        glm::vec3 lightPosition{ -1.f };
-        alignas(16) glm::vec4 lightColor{ 1.f };
+        glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f, .02f };  // w is intensity
+        glm::vec3 lightPosition{ 1.f,-0.5f,-0.5f };
+        alignas(16) glm::vec4 lightColor{ 1.f };  // w is light intensity
         //glm::vec3 lightDirection = glm::normalize(glm::vec3{ 1.f, -3.f, -1.f });
     };
 
@@ -54,7 +54,7 @@ namespace QYHS {
 
         auto globalSetLayout =
             QyhsDescriptorSetLayout::Builder(qyhsDevice)
-            .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
+            .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
             .build();
 
         std::vector<VkDescriptorSet> globalDescriptorSets(QyhsSwapChain::MAX_FRAMES_IN_FLIGHT);
@@ -130,6 +130,13 @@ namespace QYHS {
         smoothVase.transform.translation = { .5f, .5f, .5f };
         smoothVase.transform.scale = { .5f, .5f, .5f };
         gameObjects.push_back(std::move(smoothVase));
+
+        QyhsModel = QyhsModel::createModelFromFile(qyhsDevice, "models/Quad.obj");
+        auto floor = QyhsGameObject::createGameObject();
+        floor.model = QyhsModel;
+        floor.transform.translation = { .0f, .5f, .5f };
+        floor.transform.scale = { 3.5f, .5f, 3.5f };
+        gameObjects.push_back(std::move(floor));
     }
 
 }  // namespace Qyhs
