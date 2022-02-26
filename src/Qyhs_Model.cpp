@@ -7,10 +7,6 @@
 #include <iostream>
 #include <unordered_map>
 
-
-#ifndef ENGINE_DIR
-#define ENGINE_DIR "../"
-#endif
 namespace std
 {
 	template <>
@@ -37,7 +33,7 @@ namespace QYHS
 	std::unique_ptr<QyhsModel> QyhsModel::createModelFromFile(QyhsDevice & device, const  std::string & filepath)
 	{
 		Builder builder{};
-		builder.loadModel(ENGINE_DIR+filepath);
+		builder.loadModel(filepath);
 		std::cout << "Vertex Count: " << builder.vertices.size() << std::endl;
 		return std::make_unique<QyhsModel>(device, builder);
 	}

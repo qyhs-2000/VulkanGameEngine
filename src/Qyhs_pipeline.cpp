@@ -3,10 +3,6 @@
 #include <iostream>
 #include <cassert>
 #include "Qyhs_Model.hpp"
-
-#ifndef ENGINE_DIR
-#define ENGINE_DIR "../"
-#endif
 namespace QYHS
 {
 	QyhsPipeline::QyhsPipeline(QyhsDevice & device,
@@ -26,11 +22,10 @@ namespace QYHS
 	}
 	std::vector<char> QyhsPipeline::readFile(const std::string & filePath)
 	{
-		std::string enginePath=ENGINE_DIR+filePath;
-		std::ifstream file{ enginePath,std::ios::ate | std::ios::binary };
+		std::ifstream file{ filePath,std::ios::ate | std::ios::binary };
 		if (!file.is_open())
 		{
-			throw std::runtime_error("failed to open file:" + enginePath);
+			throw std::runtime_error("failed to open file:" + filePath);
 		}
 		size_t fileSize = static_cast<size_t>(file.tellg());
 		std::vector<char> buffer(fileSize);
@@ -84,8 +79,8 @@ namespace QYHS
 
 
 
-		auto bindDescription = QyhsModel::Vertex::getBindingDescriptions();
-		auto attributeDescription = QyhsModel::Vertex::getAttributeDescriptions();
+		auto &bindDescription = configInfo.bindingDescriptors;
+		auto &attributeDescription = configInfo.attributeDescriptors;
 
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -214,7 +209,8 @@ namespace QYHS
 		configInfo.dynamicStateInfo.pDynamicStates = configInfo.dynamicStateEnables.data();
 		configInfo.dynamicStateInfo.flags = 0;
 
-
+		configInfo.bindingDescriptors = QyhsModel::Vertex::getBindingDescriptions();
+		configInfo.attributeDescriptors = QyhsModel::Vertex::getAttributeDescriptions();
 	}
 
 	void QyhsPipeline::createShaderModule(std::vector<char> & code, VkShaderModule * shaderModule)

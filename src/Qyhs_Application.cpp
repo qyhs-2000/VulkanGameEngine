@@ -5,7 +5,8 @@
 #include "Camera_movement_controller.hpp"
 #include "Qyhs_buffer.hpp"
 #include "Qyhs_camera.hpp"
-#include "Qyhs_RenderSystem.hpp"
+#include "system/GameObj_RenderSystem.hpp"
+#include "system/Light_render_system.hpp"
 
 // libs
 #define GLM_FORCE_RADIANS
@@ -22,7 +23,8 @@
 namespace QYHS {
 
 	struct GlobalUbo {
-		glm::mat4 projectionView{ 1.f };
+		glm::mat4 projectionMatrix{ 1.f };
+		glm::mat4 viewMatrix{ 1.f };
 		glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f, .02f };  // w is intensity
 		glm::vec3 lightPosition{ 1.f,-0.5f,-0.5f };
 		alignas(16) glm::vec4 lightColor{ 1.f };  // w is light intensity
@@ -69,6 +71,10 @@ namespace QYHS {
 			qyhsDevice,
 			qyhsRender.getSwapChainRenderPass(),
 			globalSetLayout->getDescriptorSetLayout() };
+		PointLightSystem pointRenderSystem{
+			qyhsDevice,
+			qyhsRender.getSwapChainRenderPass(),
+			globalSetLayout->getDescriptorSetLayout() };
 		QyhsCamera camera{};
 
 		auto viewerObject = QyhsGameObject::createGameObject();
@@ -103,13 +109,15 @@ namespace QYHS {
 
 				// update
 				GlobalUbo ubo{};
-				ubo.projectionView = camera.getProjectionMatrix() * camera.getViewMatrix();
+				ubo.projectionMatrix = camera.getProjectionMatrix() ;
+				ubo.viewMatrix= camera.getViewMatrix();
 				uboBuffers[frameIndex]->writeToBuffer(&ubo);
 				uboBuffers[frameIndex]->flush();
 
 				// render
 				qyhsRender.beginSwapChainRenderPass(commandBuffer);
 				simpleRenderSystem.renderGameObject(frameInfo);
+				pointRenderSystem.render(frameInfo);
 				qyhsRender.endSwapChainRenderPass(commandBuffer);
 				qyhsRender.endFrame();
 			}

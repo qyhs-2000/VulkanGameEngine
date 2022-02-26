@@ -5,9 +5,7 @@
 #include <vector>
 namespace QYHS
 {
-	/*
-	*@brief 用该数据结构配置Pipeline所需要的信息
-	*/
+	
 	struct PipelineConfigInfo
 	{
 		PipelineConfigInfo(const PipelineConfigInfo&) = delete;
@@ -15,6 +13,10 @@ namespace QYHS
 		PipelineConfigInfo() = default;
 
 		
+		std::vector<VkVertexInputBindingDescription> bindingDescriptors{};
+		std::vector<VkVertexInputAttributeDescription> attributeDescriptors{};
+
+
 		VkPipelineViewportStateCreateInfo viewportInfo;
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
 		VkPipelineRasterizationStateCreateInfo rasterizationInfo;

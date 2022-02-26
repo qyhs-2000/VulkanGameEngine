@@ -3,7 +3,7 @@
 #include "Qyhs_pipeline.hpp"
 #include "Qyhs_Camera.hpp"
 #include "Camera_movement_controller.hpp"
-#include "Qyhs_RenderSystem.hpp"
+#include "GameObj_RenderSystem.hpp"
 #include "GameObject.hpp"
 #include "Qyhs_buffer.hpp"
 #include "Qyhs_Descriptors.hpp"
