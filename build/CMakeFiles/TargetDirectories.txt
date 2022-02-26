@@ -1,0 +1,4 @@
+D:/w/VulkanGameEngine/build/CMakeFiles/QyhsGameEngine.dir
+D:/w/VulkanGameEngine/build/CMakeFiles/Shaders.dir
+D:/w/VulkanGameEngine/build/CMakeFiles/ALL_BUILD.dir
+D:/w/VulkanGameEngine/build/CMakeFiles/ZERO_CHECK.dir

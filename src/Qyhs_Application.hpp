@@ -37,6 +37,6 @@ namespace QYHS
 		QyhsRenderer qyhsRender{ qyhsWindow,qyhsDevice };
 
 		std::unique_ptr<QyhsDescriptorPool> globalPool{};
-		std::vector<QyhsGameObject> gameObjects;
+		QyhsGameObject::Map gameObjects;
 	};
 }

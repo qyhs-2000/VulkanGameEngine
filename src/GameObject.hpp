@@ -2,6 +2,7 @@
 #include "Qyhs_Model.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <memory>
+#include <unordered_map>
 namespace QYHS
 {
 
@@ -18,6 +19,7 @@ namespace QYHS
 		{
 		public:
 			using id_t = unsigned int;
+			using Map = std::unordered_map<id_t, QyhsGameObject>;
 
 			static QyhsGameObject createGameObject() {
 				static id_t currentId = 0;

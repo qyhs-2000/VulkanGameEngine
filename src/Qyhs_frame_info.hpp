@@ -1,5 +1,6 @@
 #pragma once
 #include "Qyhs_Camera.hpp"
+#include "GameObject.hpp"
 #include <vulkan/vulkan.h>
 namespace QYHS
 {
@@ -10,5 +11,6 @@ namespace QYHS
 		VkCommandBuffer commandBuffer;
 		QyhsCamera& camera;
 		VkDescriptorSet globalDescriptorSet;
+		QyhsGameObject::Map& gameObjects;
 	};
 }

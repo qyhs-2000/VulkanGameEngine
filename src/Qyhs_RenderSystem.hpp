@@ -24,8 +24,7 @@ namespace QYHS
 		SimpleRenderSystem(const SimpleRenderSystem &) = delete;
 		SimpleRenderSystem & operator=(const SimpleRenderSystem&) = delete;
 
-		void renderGameObject(FrameInfo & frameInfo, 
-			std::vector<QyhsGameObject>& gameObjects);
+		void renderGameObject(FrameInfo & frameInfo);
 
 	private:
 
