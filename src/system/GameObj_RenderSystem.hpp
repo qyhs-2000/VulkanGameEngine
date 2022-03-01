@@ -1,7 +1,6 @@
 #pragma once
-#include "Qyhs_Window.hpp"
+
 #include "Qyhs_pipeline.hpp"
-#include "Qyhs_Renderer.hpp"
 #include "Qyhs_frame_info.hpp"
 #include "GameObject.hpp"
 #include <memory>

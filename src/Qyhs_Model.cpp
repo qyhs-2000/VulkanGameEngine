@@ -7,6 +7,12 @@
 #include <iostream>
 #include <unordered_map>
 
+
+
+
+
+
+
 namespace std
 {
 	template <>
@@ -37,6 +43,8 @@ namespace QYHS
 		std::cout << "Vertex Count: " << builder.vertices.size() << std::endl;
 		return std::make_unique<QyhsModel>(device, builder);
 	}
+
+
 	void QyhsModel::bind(VkCommandBuffer commandBuffer)
 	{
 		VkBuffer buffers[] = { vertexBuffer->getBuffer() };

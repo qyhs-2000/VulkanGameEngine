@@ -1,12 +1,12 @@
 
 
 #include "Qyhs_Application.hpp"
-
 #include "Camera_movement_controller.hpp"
 #include "Qyhs_buffer.hpp"
-#include "Qyhs_camera.hpp"
+#include "Qyhs_Camera.hpp"
 #include "system/GameObj_RenderSystem.hpp"
 #include "system/Light_render_system.hpp"
+#include "Texture_Render_System.hpp"
 
 // libs
 #define GLM_FORCE_RADIANS
@@ -19,6 +19,10 @@
 #include <cassert>
 #include <chrono>
 #include <stdexcept>
+
+
+
+
 
 namespace QYHS {
 
@@ -36,6 +40,7 @@ namespace QYHS {
 			QyhsDescriptorPool::Builder(qyhsDevice)
 			.setMaxSets(QyhsSwapChain::MAX_FRAMES_IN_FLIGHT)
 			.addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, QyhsSwapChain::MAX_FRAMES_IN_FLIGHT)
+			.addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, QyhsSwapChain::MAX_FRAMES_IN_FLIGHT)
 			.build();
 		loadGameObjects();
 	}
@@ -43,6 +48,30 @@ namespace QYHS {
 	QyhsApplication::~QyhsApplication() {}
 
 	void QyhsApplication::run() {
+
+		auto globalSetLayout =
+			QyhsDescriptorSetLayout::Builder(qyhsDevice)
+			.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
+			.addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+			.build();
+
+		SimpleRenderSystem simpleRenderSystem{
+			qyhsDevice,
+			qyhsRender.getSwapChainRenderPass(),
+			globalSetLayout->getDescriptorSetLayout() };
+		PointLightSystem pointRenderSystem{
+			qyhsDevice,
+			qyhsRender.getSwapChainRenderPass(),
+			globalSetLayout->getDescriptorSetLayout() };
+
+		TextureRenderSystem textureRenderSystem
+		{
+			qyhsDevice,
+			qyhsRender.getSwapChainRenderPass(),
+			globalSetLayout->getDescriptorSetLayout(),
+			qyhsRender.getCurrentCommandBuffer()
+		};
+
 		std::vector<std::unique_ptr<QyhsBuffer>> uboBuffers(QyhsSwapChain::MAX_FRAMES_IN_FLIGHT);
 		for (int i = 0; i < uboBuffers.size(); i++) {
 			uboBuffers[i] = std::make_unique<QyhsBuffer>(
@@ -54,27 +83,20 @@ namespace QYHS {
 			uboBuffers[i]->map();
 		}
 
-		auto globalSetLayout =
-			QyhsDescriptorSetLayout::Builder(qyhsDevice)
-			.addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
-			.build();
+		
 
 		std::vector<VkDescriptorSet> globalDescriptorSets(QyhsSwapChain::MAX_FRAMES_IN_FLIGHT);
 		for (int i = 0; i < globalDescriptorSets.size(); i++) {
 			auto bufferInfo = uboBuffers[i]->descriptorInfo();
+			auto descriptorImageInfo = textureRenderSystem.getDescriptorImageInfo();
 			QyhsDescriptorWriter(*globalSetLayout, *globalPool)
 				.writeBuffer(0, &bufferInfo)
+				.writeImage(1,&descriptorImageInfo)
 				.build(globalDescriptorSets[i]);
 		}
 
-		SimpleRenderSystem simpleRenderSystem{
-			qyhsDevice,
-			qyhsRender.getSwapChainRenderPass(),
-			globalSetLayout->getDescriptorSetLayout() };
-		PointLightSystem pointRenderSystem{
-			qyhsDevice,
-			qyhsRender.getSwapChainRenderPass(),
-			globalSetLayout->getDescriptorSetLayout() };
+		
+
 		QyhsCamera camera{};
 
 		auto viewerObject = QyhsGameObject::createGameObject();
@@ -109,8 +131,8 @@ namespace QYHS {
 
 				// update
 				GlobalUbo ubo{};
-				ubo.projectionMatrix = camera.getProjectionMatrix() ;
-				ubo.viewMatrix= camera.getViewMatrix();
+				ubo.projectionMatrix = camera.getProjectionMatrix();
+				ubo.viewMatrix = camera.getViewMatrix();
 				uboBuffers[frameIndex]->writeToBuffer(&ubo);
 				uboBuffers[frameIndex]->flush();
 
@@ -118,6 +140,7 @@ namespace QYHS {
 				qyhsRender.beginSwapChainRenderPass(commandBuffer);
 				simpleRenderSystem.renderGameObject(frameInfo);
 				pointRenderSystem.render(frameInfo);
+				textureRenderSystem.render(frameInfo);
 				qyhsRender.endSwapChainRenderPass(commandBuffer);
 				qyhsRender.endFrame();
 			}
@@ -133,21 +156,31 @@ namespace QYHS {
 		flatVase.model = QyhsModel;
 		flatVase.transform.translation = { -.5f, .5f, .5f };
 		flatVase.transform.scale = { .6f, .6f, .6f };
-		gameObjects.emplace(flatVase.getId(),std::move(flatVase));
+		gameObjects.emplace(flatVase.getId(), std::move(flatVase));
 
 		QyhsModel = QyhsModel::createModelFromFile(qyhsDevice, "models/leidian.obj");
 		auto smoothVase = QyhsGameObject::createGameObject();
 		smoothVase.model = QyhsModel;
 		smoothVase.transform.translation = { .5f, .5f, .5f };
 		smoothVase.transform.scale = { .5f, .5f, .5f };
-		gameObjects.emplace(smoothVase.getId(),std::move(smoothVase));
+		gameObjects.emplace(smoothVase.getId(), std::move(smoothVase));
 
-		QyhsModel = QyhsModel::createModelFromFile(qyhsDevice, "models/Quad.obj");
+		 QyhsModel = QyhsModel::createModelFromFile(qyhsDevice, "models/Quad.obj");
 		auto floor = QyhsGameObject::createGameObject();
 		floor.model = QyhsModel;
 		floor.transform.translation = { .0f, .5f, .5f };
 		floor.transform.scale = { 3.5f, .5f, 3.5f };
-		gameObjects.emplace(floor.getId(),std::move(floor));
+		gameObjects.emplace(floor.getId(), std::move(floor));
+
+
+		QyhsModel = QyhsModel::createModelFromFile(qyhsDevice, "models/TextureImage.obj");
+		auto texture = QyhsGameObject::createGameObject();
+		texture.model = QyhsModel;
+		texture.transform.translation = { 1.0f, 3.5f, 7.5f };
+		texture.transform.scale = { 3.5f, .5f, 3.5f };
+		gameObjects.emplace(texture.getId(), std::move(texture));
+
+
 	}
 
 }  // namespace Qyhs

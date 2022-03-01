@@ -1,5 +1,5 @@
 #include "Qyhs_Device.hpp"
-
+#include "Qyhs_frame_info.hpp"
 // std headers
 #include <cstring>
 #include <iostream>
@@ -76,7 +76,7 @@ namespace QYHS {
 
 		VkApplicationInfo appInfo = {};
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-		appInfo.pApplicationName = "LittleVulkanEngine App";
+		appInfo.pApplicationName = "QyhsVulkanEngine App";
 		appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
 		appInfo.pEngineName = "No Engine";
 		appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
@@ -484,7 +484,7 @@ namespace QYHS {
 	}
 
 	void QyhsDevice::copyBufferToImage(
-		VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount) {
+		VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount ) {
 		VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
 		VkBufferImageCopy region{};

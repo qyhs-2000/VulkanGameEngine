@@ -1,5 +1,5 @@
 #pragma once
-#include "Qyhs_Window.hpp"
+//#include "Qyhs_Window.hpp"
 #include "Qyhs_SwapChain.hpp"
 #include <glm/glm.hpp>
 #include <cassert>
@@ -26,7 +26,7 @@ namespace QYHS
 		bool isFrameInProgress() const { return isFrameStarted; }
 		VkCommandBuffer getCurrentCommandBuffer() const
 		{
-			assert(isFrameStarted&&"Cannot get command buffer when the frame is not in frame!");
+			//assert(isFrameStarted&&"Cannot get command buffer when the frame is not in frame!");
 			return commandBuffers[currentImageIndex];
 		}
 
@@ -46,6 +46,7 @@ namespace QYHS
 			assert(isFrameStarted && "Cannot get frame index when frame not in progress");
 			return currentFrameIndex;
 		}
+		std::unique_ptr<QyhsSwapChain> &getSwapChain(){ return qyhsSwapChain; }
 	private:
 		void createCommandBuffrrs();
 		void freeCommandBuffer();

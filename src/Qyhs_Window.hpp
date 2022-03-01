@@ -3,6 +3,8 @@
 #define GLFW_INCLUDE_VULKAN
 #include <string>
 #include <GLFW/glfw3.h>
+
+#include <iostream>
 namespace QYHS
 {
 	class QyhsWindow
@@ -11,7 +13,7 @@ namespace QYHS
 		QyhsWindow(int w,int h,std::string name);
 		~QyhsWindow();
 
-		//��ʼ������
+		//init window
 		void InitWindow();
 
 		bool bShouldClose() { return glfwWindowShouldClose(window); }

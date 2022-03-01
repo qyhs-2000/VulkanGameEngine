@@ -1,11 +1,16 @@
 #include "Light_render_system.hpp"
 
 
-#include "Qyhs_Application.hpp"
+// libs
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
-#include <memory>
+
+// std
 #include <array>
-#include <iostream>
+#include <cassert>
+#include <stdexcept>
 
 namespace QYHS
 {

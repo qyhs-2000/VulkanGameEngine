@@ -1052,5 +1052,5 @@ int main()
 	{
 		std::cerr << e.what() << std::endl;
 	}
-	//system("pause");
+	system("pause");
 }

@@ -1,13 +1,16 @@
 #pragma once
-#include "Qyhs_Window.hpp"
-#include "Qyhs_pipeline.hpp"
-#include "Qyhs_Camera.hpp"
-#include "Camera_movement_controller.hpp"
-#include "GameObj_RenderSystem.hpp"
-#include "GameObject.hpp"
-#include "Qyhs_buffer.hpp"
 #include "Qyhs_Descriptors.hpp"
+#include "Qyhs_Device.hpp"
+#include "GameObject.hpp"
+#include "Qyhs_renderer.hpp"
+#include "Qyhs_Window.hpp"
+
+
+
+
+// std
 #include <memory>
+#include <vector>
 namespace QYHS
 {
 	
@@ -31,7 +34,7 @@ namespace QYHS
 	private:
 		void loadGameObjects();
 
-		QyhsWindow qyhsWindow{ WIDTH, HEIGHT,"Hello Vulkan" };
+		QyhsWindow qyhsWindow{ WIDTH, HEIGHT,"Qyhs Engine" };
 		QyhsDevice qyhsDevice{ qyhsWindow };
 	
 		QyhsRenderer qyhsRender{ qyhsWindow,qyhsDevice };

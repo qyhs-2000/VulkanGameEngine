@@ -15,31 +15,31 @@ namespace QYHS
 		glm::mat4 mat4();
 		glm::mat3 normalMatrix();
 	};
-		class QyhsGameObject
-		{
-		public:
-			using id_t = unsigned int;
-			using Map = std::unordered_map<id_t, QyhsGameObject>;
+	class QyhsGameObject
+	{
+	public:
+		using id_t = unsigned int;
+		using Map = std::unordered_map<id_t, QyhsGameObject>;
 
-			static QyhsGameObject createGameObject() {
-				static id_t currentId = 0;
-				return QyhsGameObject{ currentId++ };
-			}
+		static QyhsGameObject createGameObject() {
+			static id_t currentId = 0;
+			return QyhsGameObject{ currentId++ };
+		}
 
-			QyhsGameObject(const QyhsGameObject &) = delete;
-			QyhsGameObject &operator=(const QyhsGameObject &) = delete;
-			QyhsGameObject(QyhsGameObject &&) = default;
-			QyhsGameObject &operator=(QyhsGameObject &&) = default;
+		QyhsGameObject(const QyhsGameObject&) = delete;
+		QyhsGameObject& operator=(const QyhsGameObject&) = delete;
+		QyhsGameObject(QyhsGameObject&&) = default;
+		QyhsGameObject& operator=(QyhsGameObject&&) = default;
 
-			id_t getId() { return id; }
+		id_t getId() { return id; }
 
-			std::shared_ptr<QyhsModel> model{};
-			glm::vec3 color{};
-			TransformComponent transform{};
+		std::shared_ptr<QyhsModel> model{};
+		glm::vec3 color{};
+		TransformComponent transform{};
 
-		private:
-			QyhsGameObject(id_t objId) : id{ objId } {}
+	private:
+		QyhsGameObject(id_t objId) : id{ objId } {}
 
-			id_t id;
-		};
-	}
+		id_t id;
+	};
+}

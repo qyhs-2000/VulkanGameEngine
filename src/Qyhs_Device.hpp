@@ -7,7 +7,7 @@
 #include <vector>
 
 namespace QYHS {
-
+	class FrameInfo;
 	struct SwapChainSupportDetails {
 		VkSurfaceCapabilitiesKHR capabilities;
 		std::vector<VkSurfaceFormatKHR> formats;
@@ -41,6 +41,7 @@ namespace QYHS {
 
 		VkCommandPool getCommandPool() { return commandPool; }
 		VkDevice device() { return device_; }
+		VkPhysicalDevice getPhysicalDevice() { return physicalDevice; }
 		VkSurfaceKHR surface() { return surface_; }
 		VkQueue graphicsQueue() { return graphicsQueue_; }
 		VkQueue presentQueue() { return presentQueue_; }

@@ -1,8 +1,5 @@
+
 #include "Qyhs_pipeline.hpp"
-#include <fstream>
-#include <iostream>
-#include <cassert>
-#include "Qyhs_Model.hpp"
 namespace QYHS
 {
 	QyhsPipeline::QyhsPipeline(QyhsDevice & device,

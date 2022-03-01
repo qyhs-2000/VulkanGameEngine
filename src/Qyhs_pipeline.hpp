@@ -1,6 +1,10 @@
 #pragma once
 
 #include "Qyhs_Device.hpp"
+#include "Qyhs_Model.hpp"
+#include <fstream>
+#include <iostream>
+#include <cassert>
 #include <string>
 #include <vector>
 namespace QYHS

@@ -4,7 +4,7 @@
 
 
 
-#include "Qyhs_Application.hpp"
+//#include "Qyhs_Application.hpp"
 #include <glm/gtc/constants.hpp>
 #include <memory>
 #include <array>
@@ -136,7 +136,7 @@ namespace QYHS
 
 
 	}
-	/*����pipeline*/
+	
 	
 	void QyhsRenderer::freeCommandBuffer()
 	{
@@ -145,13 +145,6 @@ namespace QYHS
 	}
 
 	
-
-
-	/*����PipelineLayout*/
-	
-	
-	
-
 	void QyhsRenderer::reCreateSwapChain()
 	{
 		auto extent = qyhsWindow.getExtent();
@@ -176,7 +169,7 @@ namespace QYHS
 			}
 		}
 
-		//createPipeline();
+		
 	}
 
 }

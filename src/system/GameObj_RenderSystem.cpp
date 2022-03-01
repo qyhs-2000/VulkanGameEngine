@@ -1,12 +1,16 @@
 #include "GameObj_RenderSystem.hpp"
 
 
-#include "Qyhs_Application.hpp"
+// libs
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
-#include <memory>
-#include <array>
-#include <iostream>
 
+// std
+#include <array>
+#include <cassert>
+#include <stdexcept>
 namespace QYHS
 {
 	SimpleRenderSystem::SimpleRenderSystem(QyhsDevice &device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout)
@@ -24,7 +28,7 @@ namespace QYHS
 
 	
 
-	/*����pipeline*/
+	
 	void SimpleRenderSystem::createPipeline(VkRenderPass renderPass)
 	{
 
